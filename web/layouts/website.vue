@@ -17,7 +17,7 @@
             </nuxt-link>
             <v-spacer></v-spacer>
             <v-btn
-              v-if="$vuetify.breakpoint.lgAndUp"
+              v-show="$vuetify.breakpoint.lgAndUp"
               large
               text
               color="primary"
@@ -27,7 +27,7 @@
               Pricing
             </v-btn>
             <v-btn
-              v-if="$vuetify.breakpoint.lgAndUp"
+              v-show="$vuetify.breakpoint.lgAndUp"
               large
               text
               color="primary"
@@ -37,7 +37,10 @@
               Blog
             </v-btn>
             <v-btn
-              v-if="$vuetify.breakpoint.lgAndUp"
+              v-show="
+                $vuetify.breakpoint.lgAndUp &&
+                $store.getters.getAuthUser === null
+              "
               large
               text
               color="primary"
@@ -47,14 +50,25 @@
               Login
             </v-btn>
             <v-btn
+              v-show="$store.getters.getAuthUser === null"
               exact-path
               color="primary"
-              class="my-5"
+              class="mt-5"
               :large="$vuetify.breakpoint.lgAndUp"
               :to="{ name: 'login' }"
             >
               Get Started
-              <span v-if="$vuetify.breakpoint.lgAndUp">&nbsp;For Free</span>
+              <span v-show="$vuetify.breakpoint.lgAndUp">&nbsp;For Free</span>
+            </v-btn>
+            <v-btn
+              v-show="$store.getters.getAuthUser !== null"
+              exact-path
+              color="primary"
+              class="mt-5"
+              :large="$vuetify.breakpoint.lgAndUp"
+              :to="{ name: 'threads' }"
+            >
+              Dashboard
             </v-btn>
           </v-col>
         </v-row>
@@ -74,7 +88,7 @@
               </v-avatar>
               <h3 class="text-h4 ml-1 text--primary">httpSMS</h3>
             </nuxt-link>
-            <p class="subtitle-2 text--secondary">
+            <div class="subtitle-2 mb-4 text--secondary">
               Made With <v-icon color="#cf1112">{{ mdiHeart }}</v-icon> in
               Tallinn
               <v-img
@@ -82,7 +96,7 @@
                 width="20"
                 src="https://upload.wikimedia.org/wikipedia/commons/8/8f/Flag_of_Estonia.svg"
               ></v-img>
-            </p>
+            </div>
             <p class="mt-n3">
               <v-btn href="https://twitter.com/httpsmsHQ" icon color="#1DA1F2">
                 <v-icon>{{ mdiTwitter }}</v-icon>
@@ -285,6 +299,7 @@ import {
   mdiShieldStar,
   mdiLightbulbOn50,
   mdiCreation,
+  mdiDomain,
   mdiEyeOffOutline,
   mdiPost,
   mdiCreditCardOutline,
@@ -308,6 +323,7 @@ export default Vue.extend({
       mdiCreditCardOutline,
       mdiEmailOutline,
       mdiPost,
+      mdiDomain,
       mdiCircle,
       mdiShieldStar,
       mdiLightbulbOn50,

@@ -305,8 +305,9 @@ export const actions = {
       },
     })
 
-    await context.dispatch('getHeartbeat')
-    context.commit('setThreads', response.data.data)
+    // eslint-disable-next-line no-console
+    context.dispatch('getHeartbeat').catch(console.error)
+    await context.commit('setThreads', response.data.data)
   },
 
   async loadBillingUsage(context: ActionContext<State, State>) {
@@ -658,6 +659,27 @@ export const actions = {
 
     setApiKey(response.data.data.api_key)
     context.commit('setUser', response.data.data)
+  },
+
+  deleteUserAccount(context: ActionContext<State, State>) {
+    return new Promise<string>((resolve, reject) => {
+      axios
+        .delete<ResponsesNoContent>(`/v1/users/me`)
+        .then((response: AxiosResponse<ResponsesNoContent>) => {
+          resolve(response.data.message)
+        })
+        .catch(async (error: AxiosError) => {
+          await Promise.all([
+            context.dispatch('addNotification', {
+              message:
+                (error.response?.data as any)?.message ??
+                'Error while deleting your user account',
+              type: 'error',
+            }),
+          ])
+          reject(getErrorMessages(error))
+        })
+    })
   },
 
   updateTimezone(

@@ -143,6 +143,8 @@ func NewContainer(projectID string, version string) (container *Container) {
 	container.RegisterDiscordRoutes()
 	container.RegisterDiscordListeners()
 
+	container.RegisterMarketingListeners()
+
 	// this has to be last since it registers the /* route
 	container.RegisterSwaggerRoutes()
 
@@ -244,6 +246,31 @@ func (container *Container) DedicatedDB() (db *gorm.DB) {
 
 	container.dedicatedDB = db
 	return container.dedicatedDB
+}
+
+// DBWithoutMigration creates an instance of gorm.DB if it has not been created already
+func (container *Container) DBWithoutMigration() (db *gorm.DB) {
+	if container.db != nil {
+		return container.db
+	}
+
+	container.logger.Debug(fmt.Sprintf("creating %T", db))
+
+	config := &gorm.Config{TranslateError: true}
+	if isLocal() {
+		config.Logger = container.GormLogger()
+	}
+
+	db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), config)
+	if err != nil {
+		container.logger.Fatal(err)
+	}
+	container.db = db
+
+	if err = db.Use(tracing.NewPlugin()); err != nil {
+		container.logger.Fatal(stacktrace.Propagate(err, "cannot use GORM tracing plugin"))
+	}
+	return container.db
 }
 
 // DB creates an instance of gorm.DB if it has not been created already
@@ -696,16 +723,6 @@ func (container *Container) MessageThreadRepository() (repository repositories.M
 	)
 }
 
-// EventRepository creates a new instance of repositories.EventRepository
-func (container *Container) EventRepository() (repository repositories.EventRepository) {
-	container.logger.Debug("creating GORM repositories.EventRepository")
-	return repositories.NewGormEventRepository(
-		container.Logger(),
-		container.Tracer(),
-		container.DB(),
-	)
-}
-
 // HeartbeatMonitorRepository creates a new instance of repositories.HeartbeatMonitorRepository
 func (container *Container) HeartbeatMonitorRepository() (repository repositories.HeartbeatMonitorRepository) {
 	container.logger.Debug("creating GORM repositories.HeartbeatMonitorRepository")
@@ -713,16 +730,6 @@ func (container *Container) HeartbeatMonitorRepository() (repository repositorie
 		container.Logger(),
 		container.Tracer(),
 		container.DedicatedDB(),
-	)
-}
-
-// EventListenerLogRepository creates a new instance of repositories.EventListenerLogRepository
-func (container *Container) EventListenerLogRepository() (repository repositories.EventListenerLogRepository) {
-	container.logger.Debug("creating GORM repositories.EventListenerLogRepository")
-	return repositories.NewGormEventListenerLogRepository(
-		container.Logger(),
-		container.Tracer(),
-		container.DB(),
 	)
 }
 
@@ -861,6 +868,7 @@ func (container *Container) UserService() (service *services.UserService) {
 		container.MarketingService(),
 		container.LemonsqueezyClient(),
 		container.EventDispatcher(),
+		container.FirebaseAuthClient(),
 	)
 }
 
@@ -1192,6 +1200,20 @@ func (container *Container) RegisterDiscordListeners() {
 	}
 }
 
+// RegisterMarketingListeners registers event listeners for listeners.MarketingListener
+func (container *Container) RegisterMarketingListeners() {
+	container.logger.Debug(fmt.Sprintf("registering listeners for %T", listeners.MarketingListener{}))
+	_, routes := listeners.NewMarketingListener(
+		container.Logger(),
+		container.Tracer(),
+		container.MarketingService(),
+	)
+
+	for event, handler := range routes {
+		container.EventDispatcher().Subscribe(event, handler)
+	}
+}
+
 // RegisterIntegration3CXListeners registers event listeners for listeners.Integration3CXListener
 func (container *Container) RegisterIntegration3CXListeners() {
 	container.logger.Debug(fmt.Sprintf("registering listeners for %T", listeners.Integration3CXListener{}))
@@ -1321,21 +1343,21 @@ func (container *Container) UserRepository() repositories.UserRepository {
 	return repositories.NewGormUserRepository(
 		container.Logger(),
 		container.Tracer(),
-		container.RistrettoCache(),
+		container.UserRistrettoCache(),
 		container.DB(),
 	)
 }
 
-// RistrettoCache creates an in-memory *ristretto.Cache
-func (container *Container) RistrettoCache() (cache *ristretto.Cache) {
+// UserRistrettoCache creates an in-memory *ristretto.Cache[string, entities.AuthUser]
+func (container *Container) UserRistrettoCache() (cache *ristretto.Cache[string, entities.AuthUser]) {
 	container.logger.Debug(fmt.Sprintf("creating %T", cache))
-	ristrettoCache, err := ristretto.NewCache(&ristretto.Config{
+	ristrettoCache, err := ristretto.NewCache[string, entities.AuthUser](&ristretto.Config[string, entities.AuthUser]{
 		MaxCost:     5000,
 		NumCounters: 5000 * 10,
 		BufferItems: 64,
 	})
 	if err != nil {
-		container.logger.Fatal(stacktrace.Propagate(err, "cannot create ristretto cache"))
+		container.logger.Fatal(stacktrace.Propagate(err, "cannot create user ristretto cache"))
 	}
 	return ristrettoCache
 }

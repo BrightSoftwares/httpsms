@@ -51,8 +51,8 @@
             </v-btn>
           </div>
           <p class="text-body-2 mt-2">
-            ⚡Trusted by <b>3,929+</b> happy users who have sent or received
-            more than <b>1,095,183+</b> messages.
+            ⚡Trusted by <b>5,952+</b> happy users who have sent or received
+            more than <b>2,860,049+</b> messages.
           </p>
           <div
             class="mt-4"
@@ -826,6 +826,7 @@ import {
   mdiForum,
   mdiCreation,
   mdiNumeric1,
+  mdiSale,
   mdiLanguagePython,
   mdiNumeric2,
   mdiNumeric3,
@@ -858,6 +859,7 @@ export default Vue.extend({
       mdiNumeric2,
       mdiNumeric3,
       mdiTallyMark1,
+      mdiSale,
       mdiTallyMark2,
 
       mdiTallyMark3,
@@ -870,7 +872,6 @@ export default Vue.extend({
       mdiLanguageGo,
       selectedTab: 'javascript',
       yearlyPricing: false,
-      substackLoaded: false,
     }
   },
 })

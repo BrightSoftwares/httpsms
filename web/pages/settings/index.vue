@@ -83,6 +83,45 @@
                 notification-text="API Key copied successfully"
               ></copy-button>
               <v-btn
+                v-if="$vuetify.breakpoint.mdAndUp"
+                color="primary"
+                class="ml-4"
+                @click="showQrCodeDialog = true"
+              >
+                <v-icon left>{{ mdiQrcode }}</v-icon>
+                Show QR Code
+              </v-btn>
+              <v-dialog
+                v-model="showQrCodeDialog"
+                overlay-opacity="0.9"
+                max-width="400px"
+              >
+                <v-card>
+                  <v-card-title class="justify-center"
+                    >API Key QR Code</v-card-title
+                  >
+                  <v-card-subtitle class="mt-2 text-center"
+                    >Scan this QR code with the
+                    <a :href="$store.getters.getAppData.appDownloadUrl"
+                      >httpSMS app</a
+                    >
+                    on your Android phone to login.</v-card-subtitle
+                  >
+                  <v-card-text class="text-center">
+                    <canvas ref="qrCodeCanvas"></canvas>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn
+                      color="primary"
+                      block
+                      class="mb-4"
+                      @click="showQrCodeDialog = false"
+                      >Close</v-btn
+                    >
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+              <v-btn
                 v-if="$vuetify.breakpoint.lgAndUp"
                 class="ml-4"
                 :href="$store.getters.getAppData.documentationUrl"
@@ -360,15 +399,88 @@
               hint="This switch controls email notifications we send when we your message is failed or expired."
               persistent-hint
             ></v-switch>
+            <v-switch
+              v-model="notificationSettings.newsletter_enabled"
+              label="Newsletter emails"
+              :disabled="updatingEmailNotifications"
+              hint="This switch controls newsletter emails about new features, updates, and promotions."
+              persistent-hint
+            ></v-switch>
             <v-btn
               color="primary"
               :loading="updatingEmailNotifications"
               class="mt-4"
               @click="saveEmailNotifications"
             >
-              <v-icon></v-icon>
+              <v-icon left>{{ mdiContentSave }}</v-icon>
               Save Notification Settings
             </v-btn>
+            <h5 id="email-notifications" class="text-h4 error--text mb-3 mt-12">
+              Delete Account
+            </h5>
+            <p v-if="hasActiveSubscription" class="text--secondary">
+              You cannot delete your account because you have an active
+              subscription on httpSMS.
+              <router-link class="text-decoration-none" to="/billing"
+                >Cancel your subscription</router-link
+              >
+              before deleting your account.
+            </p>
+            <p v-else class="text--secondary">
+              You can delete all your data on httpSMS by clicking the button
+              below. This action is <b>irreversible</b> and all your data will
+              be permanently deleted from the httpSMS database instantly and it
+              cannot be recovered.
+            </p>
+            <v-btn
+              color="error"
+              :loading="deletingAccount"
+              class="mt-4"
+              :disabled="hasActiveSubscription"
+              @click="showDeleteAccountDialog = true"
+            >
+              <v-icon left>{{ mdiDelete }}</v-icon>
+              Delete your Account
+            </v-btn>
+            <v-dialog
+              v-model="showDeleteAccountDialog"
+              overlay-opacity="0.9"
+              max-width="600px"
+            >
+              <v-card>
+                <v-card-title class="justify-center text-center"
+                  >Delete your httpSMS account</v-card-title
+                >
+                <v-card-text class="mt-2 text-center">
+                  Are you sure you want to delete your account? This action is
+                  <b>irreversible</b> and all your data will be permanently
+                  deleted from the httpSMS database instantly.
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn
+                    color="error"
+                    text
+                    :loading="deletingAccount"
+                    @click="deleteUserAccount"
+                  >
+                    <v-icon v-if="$vuetify.breakpoint.lgAndUp" left>{{
+                      mdiDelete
+                    }}</v-icon>
+                    Delete My Account
+                  </v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="primary"
+                    @click="showDeleteAccountDialog = false"
+                  >
+                    <span v-if="$vuetify.breakpoint.lgAndUp"
+                      >Keep My account</span
+                    >
+                    <span v-else>Close</span>
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-col>
         </v-row>
       </v-container>
@@ -714,7 +826,9 @@ import {
   mdiLinkVariant,
   mdiEyeOff,
   mdiSquareEditOutline,
+  mdiQrcode,
 } from '@mdi/js'
+import QRCode from 'qrcode'
 import { ErrorMessages } from '~/plugins/errors'
 import LoadingButton from '~/components/LoadingButton.vue'
 
@@ -731,6 +845,7 @@ export default Vue.extend({
       mdiAccountCircle,
       mdiShieldCheck,
       mdiDelete,
+      mdiQrcode,
       mdiLinkVariant,
       mdiContentSave,
       mdiSquareEditOutline,
@@ -741,6 +856,9 @@ export default Vue.extend({
       showDiscordEdit: false,
       showRotateApiKey: false,
       rotatingApiKey: false,
+      showQrCodeDialog: false,
+      deletingAccount: false,
+      showDeleteAccountDialog: false,
       activeWebhook: {
         id: null,
         url: '',
@@ -759,6 +877,7 @@ export default Vue.extend({
       notificationSettings: {
         webhook_enabled: true,
         message_status_enabled: true,
+        newsletter_enabled: true,
         heartbeat_enabled: true,
       },
       updatingWebhook: false,
@@ -794,6 +913,12 @@ export default Vue.extend({
       }
       return this.$store.getters.getUser.api_key
     },
+    hasActiveSubscription() {
+      if (this.$store.getters.getUser === null) {
+        return true
+      }
+      return this.$store.getters.getUser.subscription_renews_at != null
+    },
     timezones() {
       return Intl.supportedValuesOf('timeZone')
     },
@@ -801,6 +926,15 @@ export default Vue.extend({
       return this.$store.getters.getPhones.map((phone) => {
         return phone.phone_number
       })
+    },
+  },
+  watch: {
+    showQrCodeDialog(newVal) {
+      if (newVal && this.apiKey) {
+        this.$nextTick(() => {
+          this.generateQrCode(this.apiKey)
+        })
+      }
     },
   },
   async mounted() {
@@ -818,6 +952,19 @@ export default Vue.extend({
   },
 
   methods: {
+    generateQrCode(text) {
+      const canvas = this.$refs.qrCodeCanvas
+      if (canvas) {
+        QRCode.toCanvas(canvas, text, { errorCorrectionLevel: 'H' }, (err) => {
+          if (err) {
+            this.$store.dispatch('addNotification', {
+              message: 'Failed to generate API key QR code',
+              type: 'error',
+            })
+          }
+        })
+      }
+    },
     updateEmailNotifications() {
       this.notificationSettings = {
         webhook_enabled:
@@ -826,6 +973,8 @@ export default Vue.extend({
           this.$store.getters.getUser.notification_message_status_enabled,
         heartbeat_enabled:
           this.$store.getters.getUser.notification_heartbeat_enabled,
+        newsletter_enabled:
+          this.$store.getters.getUser.notification_newsletter_enabled,
       }
     },
     showEditPhone(phoneId) {
@@ -1102,6 +1251,31 @@ export default Vue.extend({
         })
         .finally(() => {
           this.loadingDiscordIntegrations = false
+        })
+    },
+
+    deleteUserAccount() {
+      this.deletingAccount = true
+      this.$store
+        .dispatch('deleteUserAccount')
+        .then((message) => {
+          this.$store.dispatch('addNotification', {
+            message: message ?? 'Your account has been deleted successfully',
+            type: 'success',
+          })
+          this.$fire.auth.signOut().then(() => {
+            this.$store.dispatch('setAuthUser', null)
+            this.$store.dispatch('resetState')
+            this.$store.dispatch('addNotification', {
+              type: 'info',
+              message: 'You have successfully logged out',
+            })
+            this.$router.push({ name: 'index' })
+          })
+        })
+        .finally(() => {
+          this.deletingAccount = false
+          this.showDeleteAccountDialog = false
         })
     },
 
