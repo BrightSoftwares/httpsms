@@ -1,0 +1,13 @@
+35  cd api
+   36  cd ../api/
+   37  dir
+   38  ll
+   39  docker images
+   40  docker build -t httpsms-backend:v1 .
+   41  gcloud artifacts repositories
+   42  gcloud artifacts repositories list
+   43  docker images
+   44  docker tag httpsms-backend:v1 europe-west9-docker.pkg.dev/httpsms-swh33/httpsms-repo/httpsms-backend
+   45  history
+   46  docker push europe-west9-docker.pkg.dev/httpsms-swh33/httpsms-repo/httpsms-backend
+   47  history
