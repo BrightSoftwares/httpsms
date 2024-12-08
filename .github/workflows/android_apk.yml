@@ -34,7 +34,7 @@ jobs:
           echo "Move into the android directory"
           cd android 
           echo "Building android application"
-          gradlew assembleDebug
+          ./gradlew assembleDebug
           echo "Building done"
 
 
