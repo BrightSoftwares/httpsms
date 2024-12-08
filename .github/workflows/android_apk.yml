@@ -24,7 +24,7 @@ jobs:
         run: |
           echo "Decrypting the inventory file"
           ls -lah android/app/
-          gpg --quiet --batch --yes --decrypt --passphrase=${{ secrets.PGP_PASSPHRASE }} --output android/app android/app/google-services.json.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase=${{ secrets.PGP_PASSPHRASE }} --output android/app/google-services.json android/app/google-services.json.gpg
           echo "Decrypted"
           ls -lah android/app/
 
