@@ -28,6 +28,11 @@ jobs:
           echo "Decrypted"
           ls -lah android/app/
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '21'
+
       - name: Build the app
         #if: ${{ false }} # A trick to skip this step and go tot he next one 
         run: |
