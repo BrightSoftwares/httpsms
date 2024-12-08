@@ -2,8 +2,8 @@ name: Build and deploy android apk
 
 on: 
   push:
-    #branches:
-    #  - main
+    branches:
+      - main
     tags:
       - "v*"
   workflow_dispatch:
@@ -67,6 +67,8 @@ jobs:
           echo "Checking the apk"
           ls -lR android/app/build/outputs/
 
+          [ -f "android/app/build/outputs/apk/debug/app-debug.apk" ] && cp "android/app/build/outputs/apk/debug/app-debug.apk" "android/app/build/outputs/apk/debug/http-sms-$tag.apk"
+
 
       - name: Create release
         env:
@@ -77,6 +79,6 @@ jobs:
               --repo="$GITHUB_REPOSITORY" \
               --title="${tag#v}" \
               --generate-notes \
-              android/app/build/outputs/apk/
+              "android/app/build/outputs/apk/debug/http-sms-$tag.apk"
 
 
