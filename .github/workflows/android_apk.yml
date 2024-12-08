@@ -65,7 +65,7 @@ jobs:
       - name: Check that the apk is there
         run: |
           echo "Checking the apk"
-          ls -lR android/app/build/
+          ls -lR android/app/build/outputs/
 
 
       - name: Create release
