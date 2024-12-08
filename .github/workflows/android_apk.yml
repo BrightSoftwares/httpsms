@@ -1,0 +1,41 @@
+name: Build and deploy android apk
+
+on: 
+  push:
+    branches:
+        - main
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    #needs: build-test
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    #runs-on: self-hosted
+
+    #env:
+    #  TARGET_HOSTS: docker_hosts_newgen
+
+    steps:
+      - name: "Checkout the code"
+        uses: actions/checkout@v2
+
+      - name: Decrypt the files
+        run: |
+          echo "Decrypting the inventory file"
+          ls -lah android/app/
+          gpg --quiet --batch --yes --decrypt --passphrase=${{ secrets.PGP_PASSPHRASE }} --output android/app android/app/google-services.json.gpg
+          echo "Decrypted"
+          ls -lah android/app/
+
+      - name: Build the app
+        #if: ${{ false }} # A trick to skip this step and go tot he next one 
+        run: |
+          echo "Move into the android directory"
+          cd android 
+          echo "Building android application"
+          gradlew assembleDebug
+          echo "Building done"
+
+
+
