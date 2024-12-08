@@ -2,8 +2,8 @@ name: Build and deploy android apk
 
 on: 
   push:
-    branches:
-      - main
+    #branches:
+    #  - main
     tags:
       - "v*"
   workflow_dispatch:
@@ -65,9 +65,9 @@ jobs:
       - name: Check that the apk is there
         run: |
           echo "Checking the apk"
+          [ -f "android/app/build/outputs/apk/debug/app-debug.apk" ] && cp "android/app/build/outputs/apk/debug/app-debug.apk" "android/app/build/outputs/apk/debug/http-sms-$tag.apk"
           ls -lR android/app/build/outputs/
 
-          [ -f "android/app/build/outputs/apk/debug/app-debug.apk" ] && cp "android/app/build/outputs/apk/debug/app-debug.apk" "android/app/build/outputs/apk/debug/http-sms-$tag.apk"
 
 
       - name: Create release
