@@ -1,0 +1,45 @@
+{
+  "name": "",
+  "root_path": ".",
+  "total_files": 295,
+  "total_lines": 41285,
+  "languages": {
+    "python": 1,
+    "javascript": 6,
+    "typescript": 18,
+    "go": 211,
+    "kotlin": 22,
+    "vue": 36,
+    "scss": 1
+  },
+  "frameworks": [
+    "Flask",
+    "Next.js",
+    "Nuxt",
+    "Angular",
+    "React",
+    "Spring",
+    "Django",
+    "Svelte",
+    "FastAPI",
+    "Vue"
+  ],
+  "dependencies": {},
+  "entry_points": [],
+  "config_files": [
+    "web/package.json",
+    "api/pkg/di/config.go",
+    "android/settings.gradle",
+    "web/static/img/blog/forward-incoming-sms-from-phone-to-webhook/settings.png",
+    "web/nuxt.config.js",
+    "web/jest.config.js",
+    "web/commitlint.config.js",
+    "web/stylelint.config.js",
+    "docker-compose.yml"
+  ],
+  "documentation": [
+    "CODE_OF_CONDUCT.md",
+    "README.md",
+    "SECURITY.md"
+  ]
+}

@@ -1,0 +1,231 @@
+{
+  "project_overview": "# Project Analysis: \n\n## Project Statistics\n- **Total Files**: 295\n- **Total Lines of Code**: 41,285\n- **Primary Languages**: go (211 files), vue (36 files), kotlin (22 files), typescript (18 files), javascript (6 files)\n\n## Detected Frameworks & Technologies\nFlask, Next.js, Nuxt, Angular, React, Spring, Django, Svelte, FastAPI, Vue\n\n## Project Structure\n- **Entry Points**: Not clearly identified\n- **Configuration Files**: 9 config files found\n- **Documentation Files**: 3 documentation files\n\n## Key Dependencies\nNo dependencies file found\n\n## Critical Files (High Complexity)\n- **codebase_analyzer.py** (python, 681 lines, complexity: 100)\n- **api/pkg/handlers/message_handler.go** (go, 542 lines, complexity: 100)\n- **api/pkg/handlers/webhook_handler.go** (go, 225 lines, complexity: 100)\n- **api/pkg/handlers/phone_handler.go** (go, 219 lines, complexity: 100)\n- **api/pkg/handlers/discord_handler.go** (go, 460 lines, complexity: 100)\n- **api/pkg/handlers/message_thread_handler.go** (go, 185 lines, complexity: 100)\n- **api/pkg/handlers/user_handler.go** (go, 278 lines, complexity: 100)\n- **api/pkg/handlers/phone_api_key_handler.go** (go, 211 lines, complexity: 100)\n- **web/models/api.ts** (typescript, 639 lines, complexity: 100)\n- **web/store/index.ts** (typescript, 1151 lines, complexity: 100)\n",
+  "technical_stack": {
+    "languages": {
+      "python": 1,
+      "javascript": 6,
+      "typescript": 18,
+      "go": 211,
+      "kotlin": 22,
+      "vue": 36,
+      "scss": 1
+    },
+    "frameworks": [
+      "Flask",
+      "Next.js",
+      "Nuxt",
+      "Angular",
+      "React",
+      "Spring",
+      "Django",
+      "Svelte",
+      "FastAPI",
+      "Vue"
+    ],
+    "dependencies": {}
+  },
+  "architecture_patterns": [
+    "Model-View Architecture",
+    "Service Layer Pattern",
+    "Component-Based Architecture"
+  ],
+  "key_components": [
+    {
+      "name": "codebase_analyzer",
+      "path": "codebase_analyzer.py",
+      "type": "python",
+      "complexity": 100,
+      "lines": 681,
+      "classes": [
+        "FileInfo",
+        "ProjectStructure",
+        "ResumableContext",
+        "CodebaseAnalyzer"
+      ],
+      "functions": [
+        "main",
+        "__init__",
+        "should_ignore_path",
+        "detect_language",
+        "extract_python_info",
+        "extract_javascript_info",
+        "calculate_complexity_score",
+        "detect_frameworks",
+        "extract_key_patterns",
+        "analyze_file"
+      ],
+      "key_patterns": []
+    },
+    {
+      "name": "message_handler",
+      "path": "api/pkg/handlers/message_handler.go",
+      "type": "go",
+      "complexity": 100,
+      "lines": 542,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "webhook_handler",
+      "path": "api/pkg/handlers/webhook_handler.go",
+      "type": "go",
+      "complexity": 100,
+      "lines": 225,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "phone_handler",
+      "path": "api/pkg/handlers/phone_handler.go",
+      "type": "go",
+      "complexity": 100,
+      "lines": 219,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "discord_handler",
+      "path": "api/pkg/handlers/discord_handler.go",
+      "type": "go",
+      "complexity": 100,
+      "lines": 460,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "message_thread_handler",
+      "path": "api/pkg/handlers/message_thread_handler.go",
+      "type": "go",
+      "complexity": 100,
+      "lines": 185,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "user_handler",
+      "path": "api/pkg/handlers/user_handler.go",
+      "type": "go",
+      "complexity": 100,
+      "lines": 278,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "phone_api_key_handler",
+      "path": "api/pkg/handlers/phone_api_key_handler.go",
+      "type": "go",
+      "complexity": 100,
+      "lines": 211,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "api",
+      "path": "web/models/api.ts",
+      "type": "typescript",
+      "complexity": 100,
+      "lines": 639,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "index",
+      "path": "web/store/index.ts",
+      "type": "typescript",
+      "complexity": 100,
+      "lines": 1151,
+      "classes": [
+        "state"
+      ],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "index",
+      "path": "web/pages/settings/index.vue",
+      "type": "vue",
+      "complexity": 100,
+      "lines": 1293,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "index",
+      "path": "web/pages/threads/_id/index.vue",
+      "type": "vue",
+      "complexity": 100,
+      "lines": 636,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "index",
+      "path": "web/pages/search-messages/index.vue",
+      "type": "vue",
+      "complexity": 94,
+      "lines": 532,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "MainActivity",
+      "path": "android/app/src/main/java/com/httpsms/MainActivity.kt",
+      "type": "kotlin",
+      "complexity": 91,
+      "lines": 352,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    },
+    {
+      "name": "FirebaseMessagingService",
+      "path": "android/app/src/main/java/com/httpsms/FirebaseMessagingService.kt",
+      "type": "kotlin",
+      "complexity": 91,
+      "lines": 294,
+      "classes": [],
+      "functions": [],
+      "key_patterns": []
+    }
+  ],
+  "api_endpoints": [],
+  "database_models": [
+    {
+      "model": "LogEntry",
+      "file": "android/app/src/main/java/com/httpsms/LogzTree.kt",
+      "language": "kotlin"
+    }
+  ],
+  "ui_components": [],
+  "external_services": [],
+  "critical_files": [
+    "codebase_analyzer.py",
+    "api/docs/docs.go",
+    "api/pkg/di/container.go",
+    "api/pkg/emails/hermes_theme.go",
+    "api/pkg/handlers/message_handler.go",
+    "api/pkg/handlers/webhook_handler.go",
+    "api/pkg/handlers/phone_handler.go",
+    "api/pkg/handlers/discord_handler.go",
+    "api/pkg/handlers/message_thread_handler.go",
+    "api/pkg/handlers/billing_handler.go"
+  ],
+  "analysis_timestamp": "2025-09-08T00:44:19.720016",
+  "progress_markers": {
+    "structure_analyzed": true,
+    "dependencies_extracted": true,
+    "patterns_identified": true,
+    "components_mapped": true
+  }
+}

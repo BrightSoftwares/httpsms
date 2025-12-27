@@ -6,3 +6,16 @@
 android/app/debug/
 *main.exe*
 android/app/release/
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.log
+.env.production
+.env.docker
+.env.production
+.env.docker
+tsconfig.json
+.pre-commit-config.yaml
